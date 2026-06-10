@@ -1,0 +1,33 @@
+# Shared CodeQL workflow, copied into each seed repo's .github/workflows/ by
+# scripts/seed-github-repos.sh. Uses build-mode: none so the tiny Java services
+# are analyzed without needing Maven/Gradle, and a CodeQL database is published
+# for Multi-Repository Variant Analysis (MRVA) to download.
+name: "CodeQL"
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    name: Analyze (java)
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java-kotlin
+          build-mode: none
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:java-kotlin"
